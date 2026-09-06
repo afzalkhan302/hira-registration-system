@@ -1,3 +1,0 @@
-# Student photographs. Reachable only through api/index.php, which checks the
-# staff passphrase first. Never served directly, whatever the file name.
-Require all denied
