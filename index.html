@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0f766e">
+<title>Course Registration — HIRA Model School &amp; Sakhakot Academy</title>
+<meta name="description" content="Apply online for DIT, Web Development and Pharmacy short courses at HIRA Model School &amp; Sakhakot Academy, Malakand. Free to apply, no account needed.">
+<meta name="robots" content="index, follow">
+
+<!-- Shared on WhatsApp, Facebook and TikTok, so it needs a proper preview card. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Admissions open — DIT, Web Development, Pharmacy">
+<meta property="og:description" content="Register online in two minutes. HIRA Model School & Sakhakot Academy, Sakhakot — Malakand.">
+<meta property="og:image" content="assets/img/logo.png">
+<meta name="twitter:card" content="summary">
+
+<link rel="icon" type="image/png" href="assets/img/logo.png">
+<link rel="apple-touch-icon" href="assets/img/logo.png">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap site-head__in">
+    <a class="brand" href="./">
+      <span class="brand__mark" data-logo>HS</span>
+      <span class="brand__text">
+        <span class="brand__name" id="brandName">HIRA Model School</span>
+        <span class="brand__sub" id="brandSub">Sakhakot Academy</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+
+  <!-- ================================================== the form ========== -->
+  <div id="formView">
+
+    <section class="hero">
+      <span class="hero__crest" data-logo></span>
+      <span class="pill"><i data-icon="graduate" data-icon-class="icon--sm"></i> Admissions open</span>
+      <h1>Register for a short course</h1>
+      <p>Fill this form in and our office will call you on the number you give. Applying is free and you do not need an account.</p>
+    </section>
+
+    <div id="setupNote" class="note note--warn hidden" style="margin-top:16px">
+      <i data-icon="alert"></i>
+      <span><strong>Not connected yet.</strong> Add your Firebase project details in <span class="mono">assets/js/firebase-config.js</span> before sharing this page.</span>
+    </div>
+
+    <!-- Course chooser doubles as the course field: picking a card sets it. -->
+    <section aria-labelledby="coursesTitle">
+      <h2 id="coursesTitle" class="sr-only">Courses on offer</h2>
+      <div class="courses" id="courseCards"></div>
+    </section>
+
+    <form id="regForm" class="card" style="margin-top:18px" novalidate>
+      <div class="card__body">
+
+        <div class="section-title"><i data-icon="user"></i><h2>Student details</h2></div>
+        <p class="small muted" style="margin-bottom:14px">Exactly as it should appear on the certificate.</p>
+
+        <div class="grid grid--2">
+          <div class="field">
+            <label for="fullName">Full name <span class="req">*</span></label>
+            <input class="control" id="fullName" name="fullName" type="text" autocomplete="name" maxlength="150" required>
+            <span class="err" data-err="fullName"></span>
+          </div>
+
+          <div class="field">
+            <label for="fatherName">Father name <span class="req">*</span></label>
+            <input class="control" id="fatherName" name="fatherName" type="text" maxlength="150" required>
+            <span class="err" data-err="fatherName"></span>
+          </div>
+
+          <div class="field">
+            <label for="dob">Date of birth <span class="req">*</span></label>
+            <input class="control" id="dob" name="dob" type="date" required>
+            <span class="err" data-err="dob"></span>
+          </div>
+
+          <div class="field">
+            <label id="genderLabel">Gender <span class="req">*</span></label>
+            <div class="choices" role="radiogroup" aria-labelledby="genderLabel">
+              <label class="choice"><input type="radio" name="gender" value="Male" required><span>Male</span></label>
+              <label class="choice"><input type="radio" name="gender" value="Female"><span>Female</span></label>
+            </div>
+            <span class="err" data-err="gender"></span>
+          </div>
+        </div>
+
+        <hr style="border:0;border-top:1px solid var(--line-soft);margin:22px 0">
+
+        <div class="section-title"><i data-icon="phone"></i><h2>How we reach you</h2></div>
+        <p class="small muted" style="margin-bottom:14px">We ring the mobile number first, so please check it.</p>
+
+        <div class="grid grid--2">
+          <div class="field">
+            <label for="mobile">Mobile number <span class="req">*</span></label>
+            <input class="control" id="mobile" name="mobile" type="tel" inputmode="tel"
+                   autocomplete="tel" placeholder="03001234567" maxlength="20" required>
+            <span class="hint">Pakistani mobile, for example 03001234567.</span>
+            <span class="err" data-err="mobile"></span>
+          </div>
+
+          <div class="field">
+            <label for="whatsapp">WhatsApp number <span class="opt">(optional)</span></label>
+            <input class="control" id="whatsapp" name="whatsapp" type="tel" inputmode="tel"
+                   placeholder="03001234567" maxlength="20">
+            <label class="small muted" style="display:flex;gap:7px;align-items:center;margin-top:2px">
+              <input type="checkbox" id="sameWhatsapp"> Same as my mobile number
+            </label>
+            <span class="err" data-err="whatsapp"></span>
+          </div>
+
+          <div class="field">
+            <label for="email">E-mail <span class="opt">(optional)</span></label>
+            <input class="control" id="email" name="email" type="email" autocomplete="email" maxlength="150">
+            <span class="err" data-err="email"></span>
+          </div>
+
+          <div class="field span-2">
+            <label for="address">Address <span class="req">*</span></label>
+            <textarea class="control" id="address" name="address" rows="2" maxlength="300" required
+                      placeholder="Village or town, and the district"></textarea>
+            <span class="err" data-err="address"></span>
+          </div>
+        </div>
+
+        <hr style="border:0;border-top:1px solid var(--line-soft);margin:22px 0">
+
+        <div class="section-title"><i data-icon="book"></i><h2>Education &amp; course</h2></div>
+        <p class="small muted" style="margin-bottom:14px">Tell us where you are starting from — every level is welcome.</p>
+
+        <div class="grid grid--2">
+          <div class="field">
+            <label for="qualification">Last qualification <span class="req">*</span></label>
+            <input class="control" id="qualification" name="qualification" list="qualList"
+                   maxlength="120" placeholder="Matric, FA / FSc, BA…" required>
+            <datalist id="qualList">
+              <option value="Middle"></option><option value="Matric"></option>
+              <option value="FA"></option><option value="FSc"></option>
+              <option value="BA / BSc"></option><option value="Graduate"></option>
+            </datalist>
+            <span class="err" data-err="qualification"></span>
+          </div>
+
+          <div class="field">
+            <label for="course">Course <span class="req">*</span></label>
+            <select class="control" id="course" name="course" required>
+              <option value="">Choose a course</option>
+            </select>
+            <span class="err" data-err="course"></span>
+          </div>
+
+          <div class="field span-2">
+            <label id="knowLabel">Previous computer / technical knowledge</label>
+            <div class="choices" role="radiogroup" aria-labelledby="knowLabel">
+              <label class="choice"><input type="radio" name="knowledge" value="None" checked><span>None</span></label>
+              <label class="choice"><input type="radio" name="knowledge" value="Basic"><span>Basic</span></label>
+              <label class="choice"><input type="radio" name="knowledge" value="Intermediate"><span>Intermediate</span></label>
+              <label class="choice"><input type="radio" name="knowledge" value="Advanced"><span>Advanced</span></label>
+            </div>
+          </div>
+
+          <div class="field span-2">
+            <label for="message">Message / remarks <span class="opt">(optional)</span></label>
+            <textarea class="control" id="message" name="message" rows="3" maxlength="800"
+                      placeholder="Anything you would like the office to know — preferred timing, questions…"></textarea>
+          </div>
+
+          <div class="field span-2">
+            <label for="photo">Passport-size photo <span class="opt">(optional)</span></label>
+            <div class="photo">
+              <span class="photo__preview" id="photoPreview"><i data-icon="camera"></i></span>
+              <span class="photo__actions">
+                <input class="sr-only" id="photo" name="photo" type="file" accept="image/*">
+                <button type="button" class="btn btn--ghost btn--sm" id="photoPick">Choose a photo</button>
+                <button type="button" class="btn btn--ghost btn--sm hidden" id="photoClear">Remove</button>
+                <span class="hint" id="photoHint">JPG or PNG. It is resized on your phone before sending.</span>
+              </span>
+            </div>
+            <span class="err" data-err="photo"></span>
+          </div>
+        </div>
+
+        <!-- Hidden from people; a bot that fills every input fills this too. -->
+        <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
+          <label for="website">Website</label>
+          <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div id="formError" class="note note--bad hidden" style="margin-top:18px">
+          <i data-icon="alert"></i><span id="formErrorText"></span>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--lg btn--block" id="submitBtn" style="margin-top:20px">
+          <span class="spinner"></span>
+          <span class="btn__label">Submit application</span>
+        </button>
+
+        <p class="tiny muted center" style="margin-top:12px">
+          By submitting you agree that the academy may contact you about this application.
+        </p>
+      </div>
+    </form>
+  </div>
+
+  <!-- ================================================== success =========== -->
+  <div id="doneView" class="hidden">
+    <div class="card" style="margin-top:26px">
+      <div class="card__body done">
+        <div class="done__mark"><i data-icon="check"></i></div>
+        <h1>Application received</h1>
+        <p class="muted" style="margin-top:8px">Thank you, <strong id="doneName"></strong>. Your application for
+          <strong id="doneCourse"></strong> has been recorded.</p>
+
+        <div class="ref">
+          <div class="tiny muted">Your application number</div>
+          <div class="ref__no mono" id="doneNo">—</div>
+        </div>
+
+        <p class="small muted">Keep this number. Quote it when our office calls you, or when you visit.
+          Your application is <strong>pending</strong> until a member of staff has spoken to you.</p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px">
+          <button type="button" class="btn btn--primary" id="shareBtn">
+            <i data-icon="share" data-icon-class="icon--sm"></i> Share this page
+          </button>
+          <button type="button" class="btn btn--ghost" id="againBtn">Register somebody else</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap center">
+    <p id="footLine">HIRA Model School &amp; Sakhakot Academy</p>
+    <p class="tiny" style="margin-top:4px">
+      Office use: <a href="admin.html">staff dashboard</a>
+    </p>
+  </div>
+</footer>
+
+<div class="toasts"></div>
+
+<!-- Firebase SDK (compat build — works with these classic scripts) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/common.js"></script>
+<script src="assets/js/firebase-api.js"></script>
+<script src="assets/js/register.js"></script>
+</body>
+</html>

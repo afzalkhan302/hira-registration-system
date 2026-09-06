@@ -1,0 +1,37 @@
+rules_version = '2';
+
+// HIRA course-registration Storage rules.
+//
+// - The public may UPLOAD a single passport photo alongside their application:
+//   an image, under 5 MB, at applications/<applicationId>/<file>. They cannot
+//   read, list, overwrite or delete anything.
+// - The office (the signed-in admin account) may read and manage the files.
+//
+// Replace ADMIN_EMAIL_PLACEHOLDER with the same admin e-mail used in
+// firestore.rules and assets/js/firebase-config.js.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'ADMIN_EMAIL_PLACEHOLDER';
+    }
+
+    match /applications/{applicationId}/{fileName} {
+      // Only the office can look at or manage stored photos.
+      allow read:          if isAdmin();
+      allow update, delete: if isAdmin();
+
+      // Anyone submitting the form may create the photo, but only a reasonably
+      // sized image — nothing else can be written to this path.
+      allow create: if request.resource.size < 5 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+    }
+
+    // Everything else is closed.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
