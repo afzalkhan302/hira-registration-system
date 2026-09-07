@@ -48,7 +48,7 @@ if (require.main === module) {
   connectDB()
     .then(() => {
       console.log('MongoDB connected.');
-      app.listen(PORT, () => console.log('API listening on http://localhost:' + PORT));
+      app.listen(PORT, '0.0.0.0', () => console.log('API listening on port ' + PORT));
     })
     .catch((err) => {
       console.error('Failed to start:', err.message);
