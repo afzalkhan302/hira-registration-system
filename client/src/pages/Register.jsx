@@ -10,6 +10,18 @@ const BLANK = {
   email: '', address: '', qualification: '', course: '', knowledge: 'None', message: '',
 };
 
+const FEATURES = [
+  { icon: 'check', title: 'Free to apply', text: 'No fee to submit an application. Apply in about two minutes.' },
+  { icon: 'user', title: 'No account needed', text: 'No sign-up, no password. Just fill the form and send it.' },
+  { icon: 'phone', title: 'We call you back', text: 'Our office rings the number you give to confirm your seat.' },
+  { icon: 'graduate', title: 'Practical courses', text: 'Hands-on DIT, Web Development and Pharmacy short courses.' },
+];
+
+function scrollToId(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 export default function Register() {
   const [form, setForm] = useState(BLANK);
   const [errors, setErrors] = useState({});
@@ -18,7 +30,7 @@ export default function Register() {
   const [photoHint, setPhotoHint] = useState('JPG or PNG. It is resized on your phone before sending.');
   const [sending, setSending] = useState(false);
   const [formError, setFormError] = useState('');
-  const [done, setDone] = useState(null); // { applicationNo, fullName, course }
+  const [done, setDone] = useState(null);
   const honeypot = useRef('');
   const photoInput = useRef(null);
 
@@ -32,6 +44,7 @@ export default function Register() {
   function pickCourse(id) {
     setForm((f) => ({ ...f, course: id }));
     setErrors((x) => { const n = { ...x }; delete n.course; return n; });
+    scrollToId('apply');
   }
 
   function onSameWhatsapp(e) {
@@ -88,7 +101,6 @@ export default function Register() {
     if (sending) return;
     setFormError('');
 
-    // Honeypot: a bot that fills every field fills this too.
     if (honeypot.current && honeypot.current.value.trim() !== '') {
       setDone({ applicationNo: 'PENDING', fullName: form.fullName, course: form.course });
       return;
@@ -98,6 +110,7 @@ export default function Register() {
     if (Object.keys(errs).length) {
       setErrors(errs);
       setFormError('Please check the highlighted fields.');
+      scrollToId('apply');
       return;
     }
 
@@ -149,21 +162,56 @@ export default function Register() {
               <span className="brand__sub">{CONFIG.ACADEMY_NAME}</span>
             </span>
           </Link>
+          <div className="site-head__end">
+            <button type="button" className="btn btn--primary btn--sm" onClick={() => scrollToId('apply')}>Register</button>
+          </div>
         </div>
       </header>
 
       <main className="wrap">
         {!done ? (
-          <div>
-            <section className="hero">
-              <span className="hero__crest brand__mark--logo"><img src={CONFIG.LOGO} alt="" /></span>
-              <span className="pill"><Icon name="graduate" className="icon--sm" /> Admissions open</span>
-              <h1>Register for a short course</h1>
-              <p>Fill this form in and our office will call you on the number you give. Applying is free and you do not need an account.</p>
+          <>
+            {/* -------------------------------------------------------- hero */}
+            <section className="home-hero">
+              <div>
+                <span className="pill"><Icon name="graduate" className="icon--sm" /> Admissions open 2026</span>
+                <h1>Register for a short course at {CONFIG.SCHOOL_NAME}</h1>
+                <p className="lead">
+                  {CONFIG.TAGLINE || 'Short courses in technology and pharmacy'} — DIT, Web Development and Pharmacy
+                  at {CONFIG.SCHOOL_NAME} &amp; {CONFIG.ACADEMY_NAME}. Applying is free and you do not need an account;
+                  our office calls you back on the number you give.
+                </p>
+                <div className="hero-cta">
+                  <button type="button" className="btn btn--primary btn--lg" onClick={() => scrollToId('apply')}>
+                    <Icon name="edit" className="icon--sm" /> Register now
+                  </button>
+                  <button type="button" className="btn btn--ghost btn--lg" onClick={() => scrollToId('courses')}>See courses</button>
+                </div>
+                <div className="trust">
+                  <span><Icon name="check" className="icon--sm" /> Free to apply</span>
+                  <span><Icon name="check" className="icon--sm" /> No account needed</span>
+                  <span><Icon name="phone" className="icon--sm" /> We call you back</span>
+                </div>
+              </div>
+
+              <aside className="hero-panel">
+                <div className="hero-panel__crest"><img src={CONFIG.LOGO} alt="" /></div>
+                <h2>{CONFIG.SCHOOL_NAME} &amp; {CONFIG.ACADEMY_NAME}</h2>
+                <ul>
+                  {CONFIG.COURSES.map((c) => (
+                    <li key={c.id}><Icon name={c.icon} className="icon--sm" /> {c.name} — {c.full}</li>
+                  ))}
+                  {CONFIG.LOCATION && <li><Icon name="pin" className="icon--sm" /> {CONFIG.LOCATION}</li>}
+                </ul>
+              </aside>
             </section>
 
-            <section aria-labelledby="coursesTitle">
-              <h2 id="coursesTitle" className="sr-only">Courses on offer</h2>
+            {/* ----------------------------------------------------- courses */}
+            <section id="courses" className="home-section anchor">
+              <div className="home-section__head">
+                <h2>Courses on offer</h2>
+                <p>Choose a course to apply — every level is welcome, beginners included.</p>
+              </div>
               <div className="courses">
                 {CONFIG.COURSES.map((c) => (
                   <button type="button" key={c.id} className="course" aria-pressed={form.course === c.id}
@@ -179,155 +227,177 @@ export default function Register() {
               </div>
             </section>
 
-            <form className="card" style={{ marginTop: 18 }} onSubmit={onSubmit} noValidate>
-              <div className="card__body">
-                <div className="section-title"><Icon name="user" /><h2>Student details</h2></div>
-                <p className="small muted" style={{ marginBottom: 14 }}>Exactly as it should appear on the certificate.</p>
-
-                <div className="grid grid--2">
-                  <div className={invalid('fullName')}>
-                    <label htmlFor="fullName">Full name <span className="req">*</span></label>
-                    <input className="control" id="fullName" type="text" autoComplete="name" maxLength={150}
-                           value={form.fullName} onChange={set('fullName')} />
-                    {err('fullName')}
-                  </div>
-                  <div className={invalid('fatherName')}>
-                    <label htmlFor="fatherName">Father name <span className="req">*</span></label>
-                    <input className="control" id="fatherName" type="text" maxLength={150}
-                           value={form.fatherName} onChange={set('fatherName')} />
-                    {err('fatherName')}
-                  </div>
-                  <div className={invalid('dob')}>
-                    <label htmlFor="dob">Date of birth <span className="req">*</span></label>
-                    <input className="control" id="dob" type="date" value={form.dob} onChange={set('dob')} />
-                    {err('dob')}
-                  </div>
-                  <div className={invalid('gender')}>
-                    <label id="genderLabel">Gender <span className="req">*</span></label>
-                    <div className="choices" role="radiogroup" aria-labelledby="genderLabel">
-                      {['Male', 'Female'].map((g) => (
-                        <label className="choice" key={g}>
-                          <input type="radio" name="gender" value={g} checked={form.gender === g} onChange={set('gender')} />
-                          <span>{g}</span>
-                        </label>
-                      ))}
-                    </div>
-                    {err('gender')}
-                  </div>
-                </div>
-
-                <hr style={{ border: 0, borderTop: '1px solid var(--line-soft)', margin: '22px 0' }} />
-                <div className="section-title"><Icon name="phone" /><h2>How we reach you</h2></div>
-                <p className="small muted" style={{ marginBottom: 14 }}>We ring the mobile number first, so please check it.</p>
-
-                <div className="grid grid--2">
-                  <div className={invalid('mobile')}>
-                    <label htmlFor="mobile">Mobile number <span className="req">*</span></label>
-                    <input className="control" id="mobile" type="tel" inputMode="tel" autoComplete="tel"
-                           placeholder="03001234567" maxLength={20} value={form.mobile} onChange={set('mobile')} />
-                    <span className="hint">Pakistani mobile, for example 03001234567.</span>
-                    {err('mobile')}
-                  </div>
-                  <div className={invalid('whatsapp')}>
-                    <label htmlFor="whatsapp">WhatsApp number <span className="opt">(optional)</span></label>
-                    <input className="control" id="whatsapp" type="tel" inputMode="tel" placeholder="03001234567"
-                           maxLength={20} value={form.whatsapp} onChange={set('whatsapp')} readOnly={sameWhatsapp} />
-                    <label className="small muted" style={{ display: 'flex', gap: 7, alignItems: 'center', marginTop: 2 }}>
-                      <input type="checkbox" checked={sameWhatsapp} onChange={onSameWhatsapp} /> Same as my mobile number
-                    </label>
-                    {err('whatsapp')}
-                  </div>
-                  <div className={invalid('email')}>
-                    <label htmlFor="email">E-mail <span className="opt">(optional)</span></label>
-                    <input className="control" id="email" type="email" autoComplete="email" maxLength={150}
-                           value={form.email} onChange={set('email')} />
-                    {err('email')}
-                  </div>
-                  <div className={invalid('address') + ' span-2'}>
-                    <label htmlFor="address">Address <span className="req">*</span></label>
-                    <textarea className="control" id="address" rows={2} maxLength={300}
-                              placeholder="Village or town, and the district" value={form.address} onChange={set('address')} />
-                    {err('address')}
-                  </div>
-                </div>
-
-                <hr style={{ border: 0, borderTop: '1px solid var(--line-soft)', margin: '22px 0' }} />
-                <div className="section-title"><Icon name="book" /><h2>Education &amp; course</h2></div>
-                <p className="small muted" style={{ marginBottom: 14 }}>Tell us where you are starting from — every level is welcome.</p>
-
-                <div className="grid grid--2">
-                  <div className={invalid('qualification')}>
-                    <label htmlFor="qualification">Last qualification <span className="req">*</span></label>
-                    <input className="control" id="qualification" list="qualList" maxLength={120}
-                           placeholder="Matric, FA / FSc, BA…" value={form.qualification} onChange={set('qualification')} />
-                    <datalist id="qualList">
-                      <option value="Middle" /><option value="Matric" /><option value="FA" />
-                      <option value="FSc" /><option value="BA / BSc" /><option value="Graduate" />
-                    </datalist>
-                    {err('qualification')}
-                  </div>
-                  <div className={invalid('course')}>
-                    <label htmlFor="course">Course <span className="req">*</span></label>
-                    <select className="control" id="course" value={form.course} onChange={set('course')}>
-                      <option value="">Choose a course</option>
-                      {CONFIG.COURSES.map((c) => <option key={c.id} value={c.id}>{c.name} — {c.full}</option>)}
-                    </select>
-                    {err('course')}
-                  </div>
-                  <div className="field span-2">
-                    <label id="knowLabel">Previous computer / technical knowledge</label>
-                    <div className="choices" role="radiogroup" aria-labelledby="knowLabel">
-                      {['None', 'Basic', 'Intermediate', 'Advanced'].map((k) => (
-                        <label className="choice" key={k}>
-                          <input type="radio" name="knowledge" value={k} checked={form.knowledge === k} onChange={set('knowledge')} />
-                          <span>{k}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="field span-2">
-                    <label htmlFor="message">Message / remarks <span className="opt">(optional)</span></label>
-                    <textarea className="control" id="message" rows={3} maxLength={800}
-                              placeholder="Anything you would like the office to know — preferred timing, questions…"
-                              value={form.message} onChange={set('message')} />
-                  </div>
-                  <div className={invalid('photo') + ' span-2'}>
-                    <label htmlFor="photo">Passport-size photo <span className="opt">(optional)</span></label>
-                    <div className="photo">
-                      <span className="photo__preview">{photo ? <img src={photo} alt="" /> : <Icon name="camera" />}</span>
-                      <span className="photo__actions">
-                        <input className="sr-only" id="photo" ref={photoInput} type="file" accept="image/*" onChange={onPhoto} />
-                        <button type="button" className="btn btn--ghost btn--sm" onClick={() => photoInput.current && photoInput.current.click()}>Choose a photo</button>
-                        {photo && <button type="button" className="btn btn--ghost btn--sm" onClick={clearPhoto}>Remove</button>}
-                        <span className="hint">{photoHint}</span>
-                      </span>
-                    </div>
-                    {err('photo')}
-                  </div>
-                </div>
-
-                <div aria-hidden="true" style={{ position: 'absolute', left: -9999, width: 1, height: 1, overflow: 'hidden' }}>
-                  <label htmlFor="website">Website</label>
-                  <input id="website" type="text" tabIndex={-1} autoComplete="off" ref={honeypot} />
-                </div>
-
-                {formError && (
-                  <div className="note note--bad" style={{ marginTop: 18 }}>
-                    <Icon name="alert" /><span>{formError}</span>
-                  </div>
-                )}
-
-                <button type="submit" className={'btn btn--primary btn--lg btn--block' + (sending ? ' is-busy' : '')}
-                        style={{ marginTop: 20 }} disabled={sending}>
-                  <span className="spinner" />
-                  <span className="btn__label">{sending ? 'Sending…' : 'Submit application'}</span>
-                </button>
-                <p className="tiny muted center" style={{ marginTop: 12 }}>
-                  By submitting you agree that the academy may contact you about this application.
-                </p>
+            {/* ---------------------------------------------------- features */}
+            <section className="home-section">
+              <div className="home-section__head"><h2>Why apply here</h2></div>
+              <div className="features">
+                {FEATURES.map((f, i) => (
+                  <article className="feature" key={i}>
+                    <div className="feature__ico"><Icon name={f.icon} /></div>
+                    <h3>{f.title}</h3>
+                    <p>{f.text}</p>
+                  </article>
+                ))}
               </div>
-            </form>
-          </div>
+            </section>
+
+            {/* ------------------------------------------------------- apply */}
+            <section id="apply" className="home-section anchor">
+              <div className="home-section__head">
+                <h2>Apply now</h2>
+                <p>Fill this in and our office will call you on the number you give.</p>
+              </div>
+
+              <form className="card" style={{ marginTop: 14 }} onSubmit={onSubmit} noValidate>
+                <div className="card__body">
+                  <div className="section-title"><Icon name="user" /><h2>Student details</h2></div>
+                  <p className="small muted" style={{ marginBottom: 14 }}>Exactly as it should appear on the certificate.</p>
+
+                  <div className="grid grid--2">
+                    <div className={invalid('fullName')}>
+                      <label htmlFor="fullName">Full name <span className="req">*</span></label>
+                      <input className="control" id="fullName" type="text" autoComplete="name" maxLength={150}
+                             value={form.fullName} onChange={set('fullName')} />
+                      {err('fullName')}
+                    </div>
+                    <div className={invalid('fatherName')}>
+                      <label htmlFor="fatherName">Father name <span className="req">*</span></label>
+                      <input className="control" id="fatherName" type="text" maxLength={150}
+                             value={form.fatherName} onChange={set('fatherName')} />
+                      {err('fatherName')}
+                    </div>
+                    <div className={invalid('dob')}>
+                      <label htmlFor="dob">Date of birth <span className="req">*</span></label>
+                      <input className="control" id="dob" type="date" value={form.dob} onChange={set('dob')} />
+                      {err('dob')}
+                    </div>
+                    <div className={invalid('gender')}>
+                      <label id="genderLabel">Gender <span className="req">*</span></label>
+                      <div className="choices" role="radiogroup" aria-labelledby="genderLabel">
+                        {['Male', 'Female'].map((g) => (
+                          <label className="choice" key={g}>
+                            <input type="radio" name="gender" value={g} checked={form.gender === g} onChange={set('gender')} />
+                            <span>{g}</span>
+                          </label>
+                        ))}
+                      </div>
+                      {err('gender')}
+                    </div>
+                  </div>
+
+                  <hr style={{ border: 0, borderTop: '1px solid var(--line-soft)', margin: '22px 0' }} />
+                  <div className="section-title"><Icon name="phone" /><h2>How we reach you</h2></div>
+                  <p className="small muted" style={{ marginBottom: 14 }}>We ring the mobile number first, so please check it.</p>
+
+                  <div className="grid grid--2">
+                    <div className={invalid('mobile')}>
+                      <label htmlFor="mobile">Mobile number <span className="req">*</span></label>
+                      <input className="control" id="mobile" type="tel" inputMode="tel" autoComplete="tel"
+                             placeholder="03001234567" maxLength={20} value={form.mobile} onChange={set('mobile')} />
+                      <span className="hint">Pakistani mobile, for example 03001234567.</span>
+                      {err('mobile')}
+                    </div>
+                    <div className={invalid('whatsapp')}>
+                      <label htmlFor="whatsapp">WhatsApp number <span className="opt">(optional)</span></label>
+                      <input className="control" id="whatsapp" type="tel" inputMode="tel" placeholder="03001234567"
+                             maxLength={20} value={form.whatsapp} onChange={set('whatsapp')} readOnly={sameWhatsapp} />
+                      <label className="small muted" style={{ display: 'flex', gap: 7, alignItems: 'center', marginTop: 2 }}>
+                        <input type="checkbox" checked={sameWhatsapp} onChange={onSameWhatsapp} /> Same as my mobile number
+                      </label>
+                      {err('whatsapp')}
+                    </div>
+                    <div className={invalid('email')}>
+                      <label htmlFor="email">E-mail <span className="opt">(optional)</span></label>
+                      <input className="control" id="email" type="email" autoComplete="email" maxLength={150}
+                             value={form.email} onChange={set('email')} />
+                      {err('email')}
+                    </div>
+                    <div className={invalid('address') + ' span-2'}>
+                      <label htmlFor="address">Address <span className="req">*</span></label>
+                      <textarea className="control" id="address" rows={2} maxLength={300}
+                                placeholder="Village or town, and the district" value={form.address} onChange={set('address')} />
+                      {err('address')}
+                    </div>
+                  </div>
+
+                  <hr style={{ border: 0, borderTop: '1px solid var(--line-soft)', margin: '22px 0' }} />
+                  <div className="section-title"><Icon name="book" /><h2>Education &amp; course</h2></div>
+                  <p className="small muted" style={{ marginBottom: 14 }}>Tell us where you are starting from — every level is welcome.</p>
+
+                  <div className="grid grid--2">
+                    <div className={invalid('qualification')}>
+                      <label htmlFor="qualification">Last qualification <span className="req">*</span></label>
+                      <input className="control" id="qualification" list="qualList" maxLength={120}
+                             placeholder="Matric, FA / FSc, BA…" value={form.qualification} onChange={set('qualification')} />
+                      <datalist id="qualList">
+                        <option value="Middle" /><option value="Matric" /><option value="FA" />
+                        <option value="FSc" /><option value="BA / BSc" /><option value="Graduate" />
+                      </datalist>
+                      {err('qualification')}
+                    </div>
+                    <div className={invalid('course')}>
+                      <label htmlFor="course">Course <span className="req">*</span></label>
+                      <select className="control" id="course" value={form.course} onChange={set('course')}>
+                        <option value="">Choose a course</option>
+                        {CONFIG.COURSES.map((c) => <option key={c.id} value={c.id}>{c.name} — {c.full}</option>)}
+                      </select>
+                      {err('course')}
+                    </div>
+                    <div className="field span-2">
+                      <label id="knowLabel">Previous computer / technical knowledge</label>
+                      <div className="choices" role="radiogroup" aria-labelledby="knowLabel">
+                        {['None', 'Basic', 'Intermediate', 'Advanced'].map((k) => (
+                          <label className="choice" key={k}>
+                            <input type="radio" name="knowledge" value={k} checked={form.knowledge === k} onChange={set('knowledge')} />
+                            <span>{k}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="field span-2">
+                      <label htmlFor="message">Message / remarks <span className="opt">(optional)</span></label>
+                      <textarea className="control" id="message" rows={3} maxLength={800}
+                                placeholder="Anything you would like the office to know — preferred timing, questions…"
+                                value={form.message} onChange={set('message')} />
+                    </div>
+                    <div className={invalid('photo') + ' span-2'}>
+                      <label htmlFor="photo">Passport-size photo <span className="opt">(optional)</span></label>
+                      <div className="photo">
+                        <span className="photo__preview">{photo ? <img src={photo} alt="" /> : <Icon name="camera" />}</span>
+                        <span className="photo__actions">
+                          <input className="sr-only" id="photo" ref={photoInput} type="file" accept="image/*" onChange={onPhoto} />
+                          <button type="button" className="btn btn--ghost btn--sm" onClick={() => photoInput.current && photoInput.current.click()}>Choose a photo</button>
+                          {photo && <button type="button" className="btn btn--ghost btn--sm" onClick={clearPhoto}>Remove</button>}
+                          <span className="hint">{photoHint}</span>
+                        </span>
+                      </div>
+                      {err('photo')}
+                    </div>
+                  </div>
+
+                  <div aria-hidden="true" style={{ position: 'absolute', left: -9999, width: 1, height: 1, overflow: 'hidden' }}>
+                    <label htmlFor="website">Website</label>
+                    <input id="website" type="text" tabIndex={-1} autoComplete="off" ref={honeypot} />
+                  </div>
+
+                  {formError && (
+                    <div className="note note--bad" style={{ marginTop: 18 }}>
+                      <Icon name="alert" /><span>{formError}</span>
+                    </div>
+                  )}
+
+                  <button type="submit" className={'btn btn--primary btn--lg btn--block' + (sending ? ' is-busy' : '')}
+                          style={{ marginTop: 20 }} disabled={sending}>
+                    <span className="spinner" />
+                    <span className="btn__label">{sending ? 'Sending…' : 'Submit application'}</span>
+                  </button>
+                  <p className="tiny muted center" style={{ marginTop: 12 }}>
+                    By submitting you agree that the academy may contact you about this application.
+                  </p>
+                </div>
+              </form>
+            </section>
+          </>
         ) : (
           <div className="card" style={{ marginTop: 26 }}>
             <div className="card__body done">

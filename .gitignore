@@ -1,15 +1,31 @@
-# Dependencies and build output
+# Dependencies
 node_modules/
+
+# Build output
+dist/
+build/
 client/dist/
 
-# Secrets — never commit real env files
+# Secrets — never commit real env files (keep only *.env.example)
 .env
 .env.*
 !.env.example
 
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local temporary files
+*.tmp
+*.temp
+*.local
+.cache/
+
 # Editor / OS noise
 .DS_Store
 Thumbs.db
-*.log
 .vscode/
 .idea/
